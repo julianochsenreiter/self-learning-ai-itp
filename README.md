@@ -5,3 +5,4 @@ Selbstlernende KI für Projektmanagement Unterricht
 Installiere die dependencies mit pip install
 - tensor flow (tensorflow)
 - open ai gym (gym)
+- pygame (pygame)
