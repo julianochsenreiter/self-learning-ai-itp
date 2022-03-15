@@ -1,7 +1,19 @@
 import pygame
-import gym
-import tensorflow
-print("Hello World!")
-print("Hello World 2!")
+from pygame.locals import (
+    QUIT,
+    KEYDOWN
+)
 
-print("HS")
+# init pygame
+pygame.init()
+
+width = 800
+height = 600
+
+screen = pygame.display.set_mode((width, height))
+
+run = True;
+while run:
+    for event in pygame.event.get():
+        if(event.type == QUIT):
+            run = False
