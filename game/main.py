@@ -5,6 +5,7 @@ from pygame.locals import (
     QUIT,
     KEYDOWN
 )
+from random import randint
 
 width = 800
 height = 600
@@ -20,11 +21,12 @@ def main():
     pygame.init()
 
     screen = pygame.display.set_mode((width, height))
-    screen.fill((255, 255, 255))
+    # screen.fill((255, 255, 255))
 
     run = True;
     ship = Ship()
-    obstacles = [obstacle.Obstacle()]
+    obstacles = [obstacle.Obstacle(screen, 700)]
+
     while run:
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -35,9 +37,11 @@ def main():
                 elif event.key == pygame.K_UP:
                     ship.up()
 
-
         for o in obstacles:
-            o.draw(screen, 100)
+            o.move(50)
+        
+
+        
 
 if __name__ == "__main__":
     main()
