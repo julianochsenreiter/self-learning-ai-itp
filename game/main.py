@@ -20,6 +20,7 @@ def main():
     pygame.init()
 
     screen = pygame.display.set_mode((width, height))
+    screen.fill((255, 255, 255))
 
     run = True;
     ship = Ship()
@@ -36,7 +37,7 @@ def main():
 
 
         for o in obstacles:
-            o.draw(100)
+            o.draw(screen, 100)
 
 if __name__ == "__main__":
     main()

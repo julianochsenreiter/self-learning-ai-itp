@@ -7,7 +7,7 @@ from pygame.draw import rect
 vgap = 0.15
 
 # the gap between the sets of pipes
-hgap = 0.15
+hgap = 0.25
 
 # the width of the pipes
 width = 0.1
@@ -20,21 +20,25 @@ class Obstacle:
     top = 0
     bottom = 0
 
-    def __init__(kwargs):
-        top = random.random()
-        buffer = minheight + width
+    def __init__(self):
+        self.top = random.random()
+        buffer = minheight + hgap
         max = 1 - buffer
-        if top > max:
-            top = max
+        if self.top > max:
+            self.top = max
         
-        bottom = 1 - top - width
+        self.bottom = 1 - self.top - hgap
 
-    def draw(self, x):
+    def draw(self, surf: pygame.Surface, x: int):
         from main import (getWidth, getHeight)
         # draw top
-        topsurf = pygame.Surface((getWidth(width), self.top))
-        rect( topsurf, colour, topsurf.get_rect() )
+        topsurf = pygame.Surface((getWidth(width), getHeight(self.top)))
+        topsurf.fill(colour)
 
         #draw bottom
-        btmsurf = pygame.Surface((getWidth(width), self.bottom))
-        rect(btmsurf, colour, btmsurf.get_rect())
+        btmsurf = pygame.Surface((getWidth(width), getHeight(self.bottom)))
+        btmsurf.fill(colour)
+
+        surf.blit(topsurf, (x, 0) )
+        surf.blit(btmsurf, (x, getHeight(1-self.bottom)))
+        pygame.display.flip()
