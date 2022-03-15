@@ -1,19 +1,35 @@
 import pygame
+import obstacle
 from pygame.locals import (
     QUIT,
     KEYDOWN
 )
 
-# init pygame
-pygame.init()
-
 width = 800
 height = 600
 
-screen = pygame.display.set_mode((width, height))
+def getHeight(percent):
+    return height * percent
 
-run = True;
-while run:
-    for event in pygame.event.get():
-        if(event.type == QUIT):
-            run = False
+def getWidth(percent):
+    return width * percent
+
+def main():
+    # init pygame
+    pygame.init()
+
+    screen = pygame.display.set_mode((width, height))
+
+    run = True;
+
+    obstacles = [obstacle.Obstacle()]
+    while run:
+        for event in pygame.event.get():
+            if(event.type == QUIT):
+                run = False
+
+        for o in obstacles:
+            o.draw(100)
+
+if __name__ == "__main__":
+    main()
