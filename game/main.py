@@ -1,12 +1,12 @@
 import pygame
-from Ship import ship
+from Ship import Ship
 from pygame.locals import (
     QUIT,
     KEYDOWN
 )
 # init pygame
 pygame.init()
-ship = ship()
+ship = Ship()
 
 width = 800
 height = 600
