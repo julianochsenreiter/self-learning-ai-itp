@@ -1,5 +1,6 @@
 import pygame
 import obstacle
+from ship import Ship
 from pygame.locals import (
     QUIT,
     KEYDOWN
@@ -21,12 +22,18 @@ def main():
     screen = pygame.display.set_mode((width, height))
 
     run = True;
-
+    ship = Ship()
     obstacles = [obstacle.Obstacle()]
     while run:
         for event in pygame.event.get():
-            if(event.type == QUIT):
+            if event.type == QUIT:
                 run = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_DOWN:
+                    ship.down()
+                elif event.key == pygame.K_UP:
+                    ship.up()
+
 
         for o in obstacles:
             o.draw(100)
