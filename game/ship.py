@@ -7,21 +7,20 @@ class Ship:
     xpos = 10
     ypos = 50
     display = pygame.display.set_mode((800,600)) 
-    d = pygame.draw.polygon(display, color=(255,0,0), points=[(xpos, ypos+10), (xpos+10,ypos), (xpos,ypos-10)])
 
     def __init__(self):
         self.speed = 20
         self.vertspeed = 200
-        self.xpos = 10
+        self.xpos = 100
         self.ypos = 50
         self.display = pygame.display.set_mode((800,600))
-        inpos = Sprite()
+        # inpos = Sprite()
     
     def up(self):
-        self.ypos -= 50
+        self.ypos -= 1
 
     def down(self):
-        self.ypos += 50       
+        self.ypos += 1
 
     def draw(self):
-        pygame.draw.polygon(self.display, color=(255,0,0), points=[(self.xpos, self.ypos+15), (self.xpos+35,self.ypos), (self.xpos,self.ypos-15)])  
+        pygame.draw.polygon(self.display, color=(255,80,80), points=[(self.xpos, self.ypos+10), (self.xpos+30,self.ypos), (self.xpos,self.ypos-10)])  
