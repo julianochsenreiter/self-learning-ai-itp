@@ -23,8 +23,8 @@ def getWidth(percent):
 def main():
     # init pygame
     pygame.init()
-    key = ""
     count = 0
+    key = ""
     screen = pygame.display.set_mode((width, height))
 
     run = True
@@ -43,18 +43,18 @@ def main():
                     key = "up"
             if event.type == pygame.KEYUP:
                 key = ""
-            count += 1
-        if count % 2 == 0:
-            if key == "up":
-                ship.up()
-            if key == "down":
-                ship.down()
+        if key == "up":
+            ship.up()
+        if key == "down":
+            ship.down()
 
         screen.fill(BACKGROUND)
 
         for o in obstacles:
-            o.move(1)
             o.draw()
+            if count % 2 == 0:
+                o.move(1)
+            count += 1
         ship.draw()
         
         pygame.display.flip()
