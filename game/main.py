@@ -30,7 +30,9 @@ def main():
     run = True
     ship = Ship()
     ship.draw()
-    obstacles = [obstacle.Obstacle(screen, 700)]
+    obstacles = [obstacle.Obstacle(screen, 700), obstacle.Obstacle(screen, 1100), obstacle.Obstacle(screen, 1300)]
+    for o in obstacles:
+        print(f"obs: {o.xpos}")
     while run:
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -50,6 +52,7 @@ def main():
 
         screen.fill(BACKGROUND)
 
+        # print(f"Obstacles: {len(obstacles)}")
         for o in obstacles:
             o.draw()
             if count % 2 == 0:
