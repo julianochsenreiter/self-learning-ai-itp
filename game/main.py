@@ -11,6 +11,7 @@ from random import randint
 width = 800
 height = 600
 
+
 BACKGROUND = (20, 20, 20)
 
 def getHeight(percent):
@@ -22,7 +23,8 @@ def getWidth(percent):
 def main():
     # init pygame
     pygame.init()
-
+    count = 0
+    key = ""
     screen = pygame.display.set_mode((width, height))
 
     run = True
@@ -36,22 +38,27 @@ def main():
             if event.type == QUIT:
                 run = False
             if event.type == pygame.KEYDOWN:
+                
                 if event.key == pygame.K_DOWN:
-                    ship.down()
+                    key = "down"
                 elif event.key == pygame.K_UP:
-                    ship.up()
+                    key = "up"
+            if event.type == pygame.KEYUP:
+                key = ""
+        if key == "up":
+            ship.up()
+        if key == "down":
+            ship.down()
 
         screen.fill(BACKGROUND)
 
         # print(f"Obstacles: {len(obstacles)}")
         for o in obstacles:
-            if o.xpos < -100:
-                obstacles.remove(o)
-                del o
-                continue
-
-            o.move(1)
             o.draw()
+            if count % 2 == 0:
+                o.move(1)
+            count += 1
+        ship.draw()
         
         pygame.display.flip()
 
