@@ -44,6 +44,7 @@ def main():
         for o in obstacles:
             o.move(1)
             o.draw()
+        ship.draw()
         
         pygame.display.flip()
 

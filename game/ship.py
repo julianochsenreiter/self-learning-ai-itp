@@ -1,4 +1,6 @@
 import pygame
+from pygame.sprite import Sprite
+from pygame.surface import Surface
 class Ship:
     speed = 20
     vertspeed = 200
@@ -13,17 +15,13 @@ class Ship:
         self.xpos = 10
         self.ypos = 50
         self.display = pygame.display.set_mode((800,600))
-        self.d = pygame.draw.polygon(self.display, color=(255,0,0), points=[(self.xpos, self.ypos+10), (self.xpos+10,self.ypos), (self.xpos,self.ypos-10)])
+        inpos = Sprite()
     
     def up(self):
-        self.ypos += 5
-        self.d.move(0, 5)
+        self.ypos -= 50
 
     def down(self):
-        self.ypos -= 5
-        self.d.move(0, -5)
-        
+        self.ypos += 50       
 
     def draw(self):
-        self.d = pygame.draw.polygon(self.display, color=(255,0,0), points=[(self.xpos, self.ypos+10), (self.xpos+10,self.ypos), (self.xpos,self.ypos-10)])  
-        pygame.display.update() 
+        pygame.draw.polygon(self.display, color=(255,0,0), points=[(self.xpos, self.ypos+15), (self.xpos+35,self.ypos), (self.xpos,self.ypos-15)])  
