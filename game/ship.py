@@ -18,9 +18,15 @@ class Ship:
     
     def up(self):
         self.ypos -= 1
+        if self.ypos < 0:
+            self.ypos = 0
+        print(self.ypos)
 
     def down(self):
         self.ypos += 1
+        if self.ypos > 600:
+            self.ypos = 600
+        print(self.ypos)
 
     def draw(self):
         pygame.draw.polygon(self.display, color=(255,80,80), points=[(self.xpos, self.ypos+10), (self.xpos+30,self.ypos), (self.xpos,self.ypos-10)])  
