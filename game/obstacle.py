@@ -1,6 +1,7 @@
 import random
 import pygame
 from pygame.sprite import Sprite
+from pygame.surface import Surface
 
 # All values are % of the screen
 # the gap between the top and the bottom pipe
@@ -15,10 +16,11 @@ width = 0.1
 # minimum height of the pipes
 minheight = 0.1
 
-colour = pygame.Color(225, 255, 225)
+OBSTC = pygame.Color(225, 255, 225)
 class Obstacle:
     top = Sprite()
     bottom = Sprite()
+    surf = None
 
     def __init__(self, surf: pygame.Surface, x: int):
         from main import (getWidth, getHeight)
@@ -31,25 +33,25 @@ class Obstacle:
         bottomdist = 1 - topdist - hgap
 
         #top
-        
         self.top.surf = pygame.Surface((getWidth(width), getHeight(topdist)))
-        self.top.surf.fill(colour)
         self.top.rect = self.top.surf.get_rect()
         self.top.rect.topleft = (x, 0)
 
-        #draw bottom
+        #bottom
         self.bottom.surf = pygame.Surface((getWidth(width), getHeight(bottomdist)))
-        self.bottom.surf.fill(colour)
         self.bottom.rect = self.bottom.surf.get_rect()
         self.bottom.rect.topleft = (x, getHeight(1-bottomdist))
 
-        #draw on screen
-        surf.blit(self.top.surf, self.top.rect)
-        surf.blit(self.bottom.surf, self.bottom.rect)
-        pygame.display.flip()
+        #save surface
+        self.surf = surf
+
+    def draw(self):
+        """draw on screen"""
+        pygame.draw.rect(self.surf, OBSTC, self.top.rect)
+        pygame.draw.rect(self.surf, OBSTC, self.bottom.rect)
     
     def move(self, dist: int):
         """Move left a certain distance"""
         self.top.rect.move_ip(-dist, 0)
         self.bottom.rect.move_ip(-dist, 0)
-        pygame.display.flip()
+        print(f"Moving by {dist} ({self.top.rect.left})")

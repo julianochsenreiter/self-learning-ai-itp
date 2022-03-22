@@ -1,3 +1,4 @@
+from time import sleep
 import pygame
 import obstacle
 from ship import Ship
@@ -9,6 +10,8 @@ from random import randint
 
 width = 800
 height = 600
+
+BACKGROUND = (20, 20, 20)
 
 def getHeight(percent):
     return height * percent
@@ -36,9 +39,14 @@ def main():
                 elif event.key == pygame.K_UP:
                     ship.up()
 
+        screen.fill(BACKGROUND)
+
         for o in obstacles:
-            o.move(50)
-    
+            o.move(1)
+            o.draw()
+        
+        pygame.display.flip()
+
 
 if __name__ == "__main__":
     main()
