@@ -21,12 +21,11 @@ def main():
     pygame.init()
 
     screen = pygame.display.set_mode((width, height))
-    # screen.fill((255, 255, 255))
 
-    run = True;
+    run = True
     ship = Ship()
+    ship.draw()
     obstacles = [obstacle.Obstacle(screen, 700)]
-
     while run:
         for event in pygame.event.get():
             if event.type == QUIT:
