@@ -42,6 +42,10 @@ def main():
         screen.fill(BACKGROUND)
 
         for o in obstacles:
+            if o.xpos < -100:
+                del o
+                continue
+
             o.move(1)
             o.draw()
         

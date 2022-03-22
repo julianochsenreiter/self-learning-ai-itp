@@ -22,6 +22,10 @@ class Obstacle:
     bottom = Sprite()
     surf = None
 
+    @property
+    def xpos(self):
+        return self.top.rect.left
+
     def __init__(self, surf: pygame.Surface, x: int):
         from main import (getWidth, getHeight)
         #generate distance
@@ -54,4 +58,4 @@ class Obstacle:
         """Move left a certain distance"""
         self.top.rect.move_ip(-dist, 0)
         self.bottom.rect.move_ip(-dist, 0)
-        print(f"Moving by {dist} ({self.top.rect.left})")
+        # print(f"Moving by {dist} ({self.top.rect.left})")
