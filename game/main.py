@@ -1,3 +1,4 @@
+from ast import Delete
 from time import sleep
 import pygame
 import obstacle
@@ -6,11 +7,11 @@ from pygame.locals import (
     QUIT,
     KEYDOWN
 )
+from pygame.font import Font
 from random import randint
 
 width = 800
 height = 600
-
 
 BACKGROUND = (20, 20, 20)
 
@@ -20,19 +21,34 @@ def getHeight(percent):
 def getWidth(percent):
     return width * percent
 
+spawndist = getWidth(1+obstacle.hgap)
+minpos = -100
+
+def obstacleDist():
+    return getWidth(obstacle.hgap)
+
+def canAddObstacle(list):
+    for e in list:
+        if isinstance(e, obstacle.Obstacle):
+            if e.xpos > obstacleDist():
+                return False
+    return True
+
+ship = Ship()
+obstacles = []
+
 def main():
     # init pygame
     pygame.init()
-    count = 0
+    pygame.font.init()
+    
     key = ""
     screen = pygame.display.set_mode((width, height))
+    font = pygame.font.SysFont("Segue UI", 50)
 
     run = True
-    ship = Ship()
-    ship.draw()
-    obstacles = [obstacle.Obstacle(screen, 700), obstacle.Obstacle(screen, 1100), obstacle.Obstacle(screen, 1300)]
-    for o in obstacles:
-        print(f"obs: {o.xpos}")
+    restart()
+    score = 0
     while run:
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -52,16 +68,31 @@ def main():
 
         screen.fill(BACKGROUND)
 
-        # print(f"Obstacles: {len(obstacles)}")
+        if len(obstacles) < 4 and canAddObstacle(obstacles):
+            obstacles.append(obstacle.Obstacle(screen, spawndist))
         for o in obstacles:
+            if o.isTouching(ship.xpos, ship.ypos):
+                restart()
+                score = 0
+
+            if o.xpos < minpos:
+                obstacles.remove(o)
+                score += 1
             o.draw()
-            if count % 2 == 0:
-                o.move(1)
-            count += 1
+            # if count % 2 == 0:
+            #    o.move(1)
+            o.move(1)  
         ship.draw()
+        
+        scoresurf = font.render(f"Score: {score}", False, (200,200,0))
+        screen.blit(scoresurf, (0,0))
         
         pygame.display.flip()
 
+def restart():
+    ship = Ship()
+    obstacles.clear()
 
 if __name__ == "__main__":
     main()
+    

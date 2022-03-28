@@ -18,10 +18,6 @@ minheight = 0.1
 
 OBSTC = pygame.Color(225, 255, 225)
 class Obstacle:
-    top = Sprite()
-    bottom = Sprite()
-    surf = Surface((0,0))
-
     @property
     def xpos(self):
         return self.top.rect.left
@@ -37,12 +33,14 @@ class Obstacle:
         bottomdist = 1 - topdist - hgap
 
         #top
+        self.top = Sprite()
         self.top.surf = Surface((getWidth(width), getHeight(topdist)))
         self.top.surf.fill(OBSTC)
         self.top.rect = self.top.surf.get_rect()
         self.top.rect.topleft = (x, 0)
 
         #bottom
+        self.bottom = Sprite()
         self.bottom.surf = Surface((getWidth(width), getHeight(bottomdist)))
         self.bottom.surf.fill(OBSTC)
         self.bottom.rect = self.bottom.surf.get_rect()
@@ -51,15 +49,26 @@ class Obstacle:
         #save surface
         self.surf = surf
 
-        print(f"Created obstacle at {x} ({self.xpos})")
+        # print(f"Created obstacle at {x} ({self.xpos})")
 
     def draw(self):
         """draw on screen"""
         self.surf.blit(self.top.surf,self.top.rect)
         self.surf.blit(self.bottom.surf, self.bottom.rect)
     
-    def move(self, dist: int):
+    def move(self, dist: float):
         """Move left a certain distance"""
         self.top.rect.move_ip(-dist, 0)
         self.bottom.rect.move_ip(-dist, 0)
         # print(f"Moving by {dist} ({self.xpos})")
+    
+    def isTouching(self, xpos: float, ypos: float ):
+        # check top
+        if self.top.rect.collidepoint(xpos, ypos):
+            return True
+
+        # check bottom
+        if self.bottom.rect.collidepoint(xpos, ypos):
+            return True
+        
+        return False
