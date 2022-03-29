@@ -98,7 +98,7 @@ def main():
         screen.blit(scoresurf, (10,10))
         
         scoresurf = font.render(f"Highscore: {highscore}", False, (200,200,0))
-        screen.blit(scoresurf, (400,10))
+        screen.blit(scoresurf, (180,10))
         
         pygame.display.flip()
         fpsClock.tick(FPS)
