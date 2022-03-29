@@ -52,7 +52,9 @@ def main():
 
     run = True
     restart()
+    highscore = 0
     score = 0
+    
     while run:
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -75,12 +77,17 @@ def main():
             obstacles.append(obstacle.Obstacle(screen, spawndist))
         for o in obstacles:
             if o.isTouching(ship.xpos, ship.ypos):
+                if score > highscore:
+                    highscore = score
                 restart()
                 score = 0
+                
 
             if o.xpos < minpos:
                 obstacles.remove(o)
                 score += 1
+                if score > highscore:
+                    highscore += 1
             o.draw()
             # if count % 2 == 0:
             #    o.move(1)
@@ -89,6 +96,9 @@ def main():
         
         scoresurf = font.render(f"Score: {score}", False, (200,200,0))
         screen.blit(scoresurf, (10,10))
+        
+        scoresurf = font.render(f"Highscore: {highscore}", False, (200,200,0))
+        screen.blit(scoresurf, (400,10))
         
         pygame.display.flip()
         fpsClock.tick(FPS)
