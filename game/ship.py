@@ -16,14 +16,14 @@ class Ship:
         self.display = pygame.display.set_mode((800,600))
         # inpos = Sprite()
     
-    def up(self):
-        self.ypos -= 1
+    def up(self, speed: int):
+        self.ypos -= speed
         if self.ypos < 10:
             self.ypos = 10
         # print(self.ypos)
 
-    def down(self):
-        self.ypos += 1
+    def down(self, speed: int):
+        self.ypos += speed
         if self.ypos > 590:
             self.ypos = 590
         # print(self.ypos)

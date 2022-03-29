@@ -13,6 +13,9 @@ from random import randint
 width = 800
 height = 600
 
+FPS = 60
+fpsClock = pygame.time.Clock()
+
 BACKGROUND = (20, 20, 20)
 
 def getHeight(percent):
@@ -21,7 +24,7 @@ def getHeight(percent):
 def getWidth(percent):
     return width * percent
 
-spawndist = getWidth(1+obstacle.hgap)
+spawndist = getWidth(1+(obstacle.hgap*2))
 minpos = -100
 
 def obstacleDist():
@@ -53,8 +56,7 @@ def main():
         for event in pygame.event.get():
             if event.type == QUIT:
                 run = False
-            if event.type == pygame.KEYDOWN:
-                
+            if event.type == pygame.KEYDOWN: 
                 if event.key == pygame.K_DOWN:
                     key = "down"
                 elif event.key == pygame.K_UP:
@@ -62,9 +64,9 @@ def main():
             if event.type == pygame.KEYUP:
                 key = ""
         if key == "up":
-            ship.up()
+            ship.up(20)
         if key == "down":
-            ship.down()
+            ship.down(20)
 
         screen.fill(BACKGROUND)
 
@@ -81,13 +83,14 @@ def main():
             o.draw()
             # if count % 2 == 0:
             #    o.move(1)
-            o.move(1)  
+            o.move(20)  
         ship.draw()
         
         scoresurf = font.render(f"Score: {score}", False, (200,200,0))
-        screen.blit(scoresurf, (0,0))
+        screen.blit(scoresurf, (10,10))
         
         pygame.display.flip()
+        fpsClock.tick(FPS)
 
 def restart():
     ship = Ship()
