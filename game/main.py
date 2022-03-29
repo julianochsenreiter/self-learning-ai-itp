@@ -1,4 +1,3 @@
-from ast import Delete
 from time import sleep
 import pygame
 import obstacle
