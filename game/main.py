@@ -47,6 +47,7 @@ def main():
     
     key = ""
     screen = pygame.display.set_mode((width, height))
+    pygame.display.set_caption("A.I.M.")
     font = pygame.font.SysFont("Segue UI", 50)
 
     run = True
