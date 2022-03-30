@@ -10,12 +10,12 @@ from pygame.locals import (
 from pygame.font import Font
 from random import randint
 
-h = open("game/highscore.csv", "r").read()
+h = open("highscore.csv", "r").read()
 if h == "":
     h = int(0)
 else:
     h = int(h)
-f = open("game/highscore.csv", "w")
+f = open("highscore.csv", "w")
 
 width = 800
 height = 600
