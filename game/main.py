@@ -66,7 +66,10 @@ def main():
 
     run = True
     restart()
-    os.chdir("game")
+
+    scr = os.path.dirname(__file__)
+    os.chdir(scr)
+
     highscore = readScore()
     score = 0
     
