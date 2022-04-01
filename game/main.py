@@ -90,11 +90,12 @@ def main():
             ship.down(20)
 
         screen.fill(BACKGROUND)
+        shiprect = ship.draw()
 
         if len(obstacles) < 4 and canAddObstacle(obstacles):
             obstacles.append(obstacle.Obstacle(screen, spawndist))
         for o in obstacles:
-            if o.isTouching(ship.xpos, ship.ypos):
+            if o.isTouching(shiprect):
                 restart()
                 score = 0
             
@@ -106,7 +107,6 @@ def main():
                     writeScore(score)
             o.draw()
             o.move(20)  
-        ship.draw()
         
         scoresurf = font.render(f"Score: {score}", False, (200,200,0))
         screen.blit(scoresurf, (10,10))

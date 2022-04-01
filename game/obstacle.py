@@ -62,13 +62,13 @@ class Obstacle:
         self.bottom.rect.move_ip(-dist, 0)
         # print(f"Moving by {dist} ({self.xpos})")
     
-    def isTouching(self, xpos: float, ypos: float ):
+    def isTouching(self, r : pygame.Rect ):
         # check top
-        if self.top.rect.collidepoint(xpos, ypos):
+        if self.top.rect.colliderect(r):
             return True
 
         # check bottom
-        if self.bottom.rect.collidepoint(xpos, ypos):
+        if self.top.rect.colliderect(r):
             return True
         
         return False
