@@ -28,5 +28,5 @@ class Ship:
             self.ypos = 590
         # print(self.ypos)
 
-    def draw(self):
-        pygame.draw.polygon(self.display, color=(255,80,80), points=[(self.xpos, self.ypos+10), (self.xpos+30,self.ypos), (self.xpos,self.ypos-10)])  
+    def draw(self) -> pygame.Rect:
+        return pygame.draw.polygon(self.display, color=(255,80,80), points=[(self.xpos, self.ypos+10), (self.xpos+30,self.ypos), (self.xpos,self.ypos-10)])  

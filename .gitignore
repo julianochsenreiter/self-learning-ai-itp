@@ -1,0 +1,3 @@
+*.csv
+/game/__pycache__/
+*.pyc

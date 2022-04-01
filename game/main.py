@@ -8,6 +8,7 @@ from pygame.locals import (
 )
 from pygame.font import Font
 from random import randint
+import os
 
 width = 800
 height = 600
@@ -36,6 +37,19 @@ def canAddObstacle(list):
                 return False
     return True
 
+def readScore() -> int:
+    print(os.getcwd())
+    with open("highscore.csv") as file:
+        content = file.read()
+        if content == "":
+            return 0
+        else:
+            return int(content)
+
+def writeScore(score: int):
+    with open("highscore.csv","w") as file:
+        file.write(str(score))
+
 ship = Ship()
 obstacles = []
 
@@ -51,7 +65,13 @@ def main():
 
     run = True
     restart()
+
+    scr = os.path.dirname(__file__)
+    os.chdir(scr)
+
+    highscore = readScore()
     score = 0
+    
     while run:
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -69,25 +89,29 @@ def main():
             ship.down(20)
 
         screen.fill(BACKGROUND)
+        shiprect = ship.draw()
 
         if len(obstacles) < 4 and canAddObstacle(obstacles):
             obstacles.append(obstacle.Obstacle(screen, spawndist))
         for o in obstacles:
-            if o.isTouching(ship.xpos, ship.ypos):
+            if o.isTouching(shiprect):
                 restart()
                 score = 0
-
+            
             if o.xpos < minpos:
                 obstacles.remove(o)
                 score += 1
+                if score > highscore:
+                    highscore = score
+                    writeScore(score)
             o.draw()
-            # if count % 2 == 0:
-            #    o.move(1)
             o.move(20)  
-        ship.draw()
         
         scoresurf = font.render(f"Score: {score}", False, (200,200,0))
         screen.blit(scoresurf, (10,10))
+        
+        scoresurf = font.render(f"Highscore: {highscore}", False, (200,200,0))
+        screen.blit(scoresurf, (180,10))
         
         pygame.display.flip()
         fpsClock.tick(FPS)
