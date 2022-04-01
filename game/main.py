@@ -9,13 +9,7 @@ from pygame.locals import (
 )
 from pygame.font import Font
 from random import randint
-
-h = open("highscore.csv", "r").read()
-if h == "":
-    h = int(0)
-else:
-    h = int(h)
-f = open("highscore.csv", "w")
+import os
 
 width = 800
 height = 600
@@ -44,6 +38,19 @@ def canAddObstacle(list):
                 return False
     return True
 
+def readScore() -> int:
+    print(os.getcwd())
+    with open("highscore.csv") as file:
+        content = file.read()
+        if content == "":
+            return 0
+        else:
+            return int(content)
+
+def writeScore(score: int):
+    with open("highscore.csv","w") as file:
+        file.write(str(score))
+
 ship = Ship()
 obstacles = []
 
@@ -59,7 +66,8 @@ def main():
 
     run = True
     restart()
-    highscore = h
+    os.chdir("game")
+    highscore = readScore()
     score = 0
     
     while run:
@@ -86,16 +94,14 @@ def main():
             if o.isTouching(ship.xpos, ship.ypos):
                 restart()
                 score = 0
-                
-
+            
             if o.xpos < minpos:
                 obstacles.remove(o)
                 score += 1
                 if score > highscore:
                     highscore = score
+                    writeScore(score)
             o.draw()
-            # if count % 2 == 0:
-            #    o.move(1)
             o.move(20)  
         ship.draw()
         
@@ -107,9 +113,6 @@ def main():
         
         pygame.display.flip()
         fpsClock.tick(FPS)
-
-    if h < highscore:
-        f.write(str(highscore))
 
 def restart():
     ship = Ship()
