@@ -68,7 +68,7 @@ class Obstacle:
             return True
 
         # check bottom
-        if self.top.rect.colliderect(r):
+        if self.bottom.rect.colliderect(r):
             return True
         
         return False
