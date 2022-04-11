@@ -6,14 +6,15 @@ from ship import Ship
 import obstacle
 import pygame
 
-class AIMEnv(gym.Env):
+# https://www.gymlibrary.ml/
+
+class SpaceshipEnv(gym.Env):
     metadata = {'render.modes': ['human']}
 
     def __init__(self):
         # init pygame
         pygame.init()
         pygame.font.init()
-        
         self.screen = pygame.display.set_mode((width, height))
         pygame.display.set_caption("A.I.M.")
 
@@ -51,12 +52,17 @@ class AIMEnv(gym.Env):
         # TODO
         pass
 
+ACTION_LOOKUP = {
+    0, #up
+    1 #down
+}
+
 # utils
 
 width = 800
 height = 600
 BACKGROUND = (20, 20, 20)
-spawndist = AIMEnv.getWidth(1+(obstacle.hgap*2))
+spawndist = getWidth(1+(obstacle.hgap*2))
 minpos = -100
 
 def getHeight(percent):
