@@ -12,6 +12,17 @@ class SpaceshipEnv(gym.Env):
     metadata = {'render.modes': ['human']}
 
     def __init__(self):
+        # init env
+        self.action_space = spaces.Discrete(2)
+
+        self.observation_space = spaces.Dict(
+            {
+                "ship": spaces.Discrete(2),
+                "top": spaces.Discrete(1),
+                "bottom": spaces.Discrete(1)
+            }
+        )
+
         # init pygame
         pygame.init()
         pygame.font.init()
@@ -20,49 +31,55 @@ class SpaceshipEnv(gym.Env):
 
         self.score = 0
         self.obstacles = []
+        self.ship = Ship()
 
     def step(self, action):
         self.screen.fill(BACKGROUND)
-        shiprect = ship.draw()
+        shiprect = self.ship.draw()
+
+        if(action == 0): # UP
+            self.ship.up(10)
+        elif(action == 1):
+            self.ship.down(10)
 
         if len(self.obstacles) < 4 and canAddObstacle(self.obstacles):
             self.obstacles.append(obstacle.Obstacle(self.screen, spawndist))
         for o in self.obstacles:
             if o.isTouching(shiprect):
-                restart()
-                
+                self.restart()
             
             if o.xpos < minpos:
-                obstacles.remove(o)
+                self.obstacles.remove(o)
                 score += 1
-                if score > highscore:
-                    highscore = score
-                    writeScore(score)
             o.draw()
             o.move(20)
         
-    def reset(self):
-        score = 0
+    def reset(self, seed=None):
+        super().reset(seed = seed)
+
+        return self.getObs()
         
     def render(self, mode='human'):
-        # TODO
-        pass
+        for o in self.obstacles:
+            o.draw()
 
     def close(self):
         # TODO
         pass
 
-ACTION_LOOKUP = {
-    0, #up
-    1 #down
-}
+    def getObs(self):
+        o = self.obstacles[0]
+        return {
+            "ship": self.ship.position, 
+            "top": o.top.bottomleft, 
+            "bottom": o.bottom.bottomleft
+        }
 
 # utils
 
 width = 800
 height = 600
 BACKGROUND = (20, 20, 20)
-spawndist = getWidth(1+(obstacle.hgap*2))
 minpos = -100
 
 def getHeight(percent):
@@ -80,3 +97,5 @@ def canAddObstacle(list):
             if e.xpos > obstacleDist():
                 return False
     return True
+
+spawndist = getWidth(1+(obstacle.hgap*2))

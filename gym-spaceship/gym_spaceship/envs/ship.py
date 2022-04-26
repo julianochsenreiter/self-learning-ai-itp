@@ -8,6 +8,10 @@ class Ship:
     # ypos = 50
     # display = pygame.display.set_mode((800,600)) 
 
+    @property
+    def position(self):
+        return (self.xpos, self.ypos)
+
     def __init__(self):
         self.speed = 20
         self.vertspeed = 200
@@ -29,4 +33,4 @@ class Ship:
         # print(self.ypos)
 
     def draw(self) -> pygame.Rect:
-        return pygame.draw.polygon(self.display, color=(255,80,80), points=[(self.xpos, self.ypos+10), (self.xpos+30,self.ypos), (self.xpos,self.ypos-10)])  
+        return pygame.draw.polygon(self.display, color=(255,80,80), points=[(self.xpos, self.ypos+10), (self.xpos+30,self.ypos), (self.xpos,self.ypos-10)])

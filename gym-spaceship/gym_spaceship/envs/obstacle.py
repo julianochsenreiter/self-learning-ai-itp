@@ -23,7 +23,7 @@ class Obstacle:
         return self.top.rect.left
 
     def __init__(self, surf: pygame.Surface, x: int):
-        from main import (getWidth, getHeight)
+        from spaceship_env import (getWidth, getHeight)
         #generate distance
         topdist = random.random()
         buffer = minheight + hgap
@@ -66,7 +66,7 @@ class Obstacle:
         # check top
         if self.top.rect.colliderect(r):
             return True
-
+        
         # check bottom
         if self.bottom.rect.colliderect(r):
             return True
