@@ -1,4 +1,5 @@
 import random
+from typing import Tuple
 import pygame
 from pygame.surface import Surface
 from pygame.sprite import Sprite
@@ -22,10 +23,13 @@ class Obstacle:
     def xpos(self):
         return self.top.rect.left
 
-    def __init__(self, surf: pygame.Surface, x: int):
+    def __init__(self, x: int, seed : int):
         from spaceship_env import (getWidth, getHeight)
         #generate distance
+        if seed != None:
+            random.seed(seed)
         topdist = random.random()
+
         buffer = minheight + hgap
         max = 1 - buffer
         if topdist > max:
@@ -46,15 +50,12 @@ class Obstacle:
         self.bottom.rect = self.bottom.surf.get_rect()
         self.bottom.rect.topleft = (x, getHeight(1-bottomdist))
 
-        #save surface
-        self.surf = surf
-
         # print(f"Created obstacle at {x} ({self.xpos})")
 
-    def draw(self):
-        """draw on screen"""
-        self.surf.blit(self.top.surf,self.top.rect)
-        self.surf.blit(self.bottom.surf, self.bottom.rect)
+    def draw(self, surf):
+        """draw on surface"""
+        surf.blit(self.top.surf,self.top.rect)
+        surf.blit(self.bottom.surf, self.bottom.rect)
     
     def move(self, dist: float):
         """Move left a certain distance"""
@@ -62,13 +63,22 @@ class Obstacle:
         self.bottom.rect.move_ip(-dist, 0)
         # print(f"Moving by {dist} ({self.xpos})")
     
-    def isTouching(self, r : pygame.Rect ):
-        # check top
-        if self.top.rect.colliderect(r):
-            return True
-        
-        # check bottom
-        if self.bottom.rect.colliderect(r):
-            return True
+    def isTouching(self, r : Tuple[float, float] | pygame.Rect ):
+        if isinstance(r, pygame.Rect):
+            # check top
+            if self.top.rect.colliderect(r):
+                return True
+            
+            # check bottom
+            if self.bottom.rect.colliderect(r):
+                return True
+        elif isinstance(r, Tuple[float, float]):
+            if self.top.rect.collidepoint(r):
+                return True
+            
+            if self.bottom.rect.collidepoint(r):
+                return True
+        else:
+            raise ValueError
         
         return False

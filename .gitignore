@@ -1,3 +1,4 @@
 *.csv
 /game/__pycache__/
 *.pyc
+/gym-spaceship/gym_spaceship.egg-info

@@ -7,8 +7,7 @@ Installiere die dependencies mit pip install
 - open ai gym (gym)
 - pygame (pygame)
 
-# Build Env
-Mit pip install -e gym-spaceship das environment installieren
+Danach installiere mit pip install -e gym-spaceship das custom Environment
 
 # Infolink
 - https://www.tensorflow.org/tutorials/keras/classification?hl=en

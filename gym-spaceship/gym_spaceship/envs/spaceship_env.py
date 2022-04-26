@@ -1,6 +1,7 @@
 import gym
 from gym import error, spaces, utils
 from gym.utils import seeding
+import numpy as np
 
 from ship import Ship
 import obstacle
@@ -24,35 +25,39 @@ class SpaceshipEnv(gym.Env):
         )
 
         # init pygame
+        self.window = None
+        self.clock = None
         pygame.init()
         pygame.font.init()
         self.screen = pygame.display.set_mode((width, height))
         pygame.display.set_caption("A.I.M.")
 
-        self.score = 0
-        self.obstacles = []
+        self.obstacles = list[obstacle.Obstacle]
         self.ship = Ship()
 
     def step(self, action):
-        self.screen.fill(BACKGROUND)
-        shiprect = self.ship.draw()
+        done = False
+        reward = 0
 
         if(action == 0): # UP
             self.ship.up(10)
-        elif(action == 1):
+        elif(action == 1): # DOWN
             self.ship.down(10)
 
         if len(self.obstacles) < 4 and canAddObstacle(self.obstacles):
-            self.obstacles.append(obstacle.Obstacle(self.screen, spawndist))
+            self.obstacles.append(obstacle.Obstacle(spawndist))
         for o in self.obstacles:
-            if o.isTouching(shiprect):
-                self.restart()
-            
+            if o.isTouching(self.ship.position):
+                done = True
             if o.xpos < minpos:
                 self.obstacles.remove(o)
-                score += 1
+                reward += 1
             o.draw()
             o.move(20)
+
+        obs = self.getObs()
+
+        return obs, reward, done
         
     def reset(self, seed=None):
         super().reset(seed = seed)
@@ -60,12 +65,38 @@ class SpaceshipEnv(gym.Env):
         return self.getObs()
         
     def render(self, mode='human'):
+        if self.window is None and mode == "human":
+            pygame.init()
+            pygame.display.init()
+            pygame.display.set_caption("Spaceship")
+            self.window = pygame.display.set_mode((width, height))
+
+        if self.clock is None and mode == "human":
+            self.clock = pygame.time.Clock()
+
+        canvas = pygame.Surface((width, height))
+        canvas.fill(pygame.Color)
         for o in self.obstacles:
-            o.draw()
+            o.draw(canvas)
+        
+        if mode == "human":
+            # The following line copies our drawings from `canvas` to the visible window
+            self.window.blit(canvas, canvas.get_rect())
+            pygame.event.pump()
+            pygame.display.update()
+
+            # We need to ensure that human-rendering occurs at the predefined framerate.
+            # The following line will automatically add a delay to keep the framerate stable.
+            self.clock.tick(self.metadata["render_fps"])
+        else:  # rgb_array
+            return np.transpose(
+                np.array(pygame.surfarray.pixels3d(canvas)), axes=(1, 0, 2)
+            )
 
     def close(self):
-        # TODO
-        pass
+        if self.window is not None:
+            pygame.display.quit()
+            pygame.quit()
 
     def getObs(self):
         o = self.obstacles[0]
