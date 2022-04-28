@@ -3,8 +3,8 @@ from gym import error, spaces, utils
 from gym.utils import seeding
 import numpy as np
 
-from ship import Ship
-import obstacle
+from .ship import Ship
+from .obstacle import *
 import pygame
 
 # https://www.gymlibrary.ml/
@@ -27,12 +27,8 @@ class SpaceshipEnv(gym.Env):
         # init pygame
         self.window = None
         self.clock = None
-        pygame.init()
-        pygame.font.init()
-        self.screen = pygame.display.set_mode((width, height))
-        pygame.display.set_caption("A.I.M.")
 
-        self.obstacles = list[obstacle.Obstacle]
+        self.obstacles = []
         self.ship = Ship()
 
     def step(self, action):
@@ -45,7 +41,12 @@ class SpaceshipEnv(gym.Env):
             self.ship.down(10)
 
         if len(self.obstacles) < 4 and canAddObstacle(self.obstacles):
-            self.obstacles.append(obstacle.Obstacle(spawndist))
+            if self.seed != None and isinstance(self.seed):
+                self.obstacles.append(Obstacle(spawndist, self.seed))
+                
+            else:
+                self.obstacles.append(Obstacle(spawndist))
+        
         for o in self.obstacles:
             if o.isTouching(self.ship.position):
                 done = True
@@ -61,8 +62,10 @@ class SpaceshipEnv(gym.Env):
         
     def reset(self, seed=None):
         super().reset(seed = seed)
+        self.seed = seed;
 
-        return self.getObs()
+        obs = self.getObs()
+        return obs
         
     def render(self, mode='human'):
         if self.window is None and mode == "human":
@@ -99,6 +102,13 @@ class SpaceshipEnv(gym.Env):
             pygame.quit()
 
     def getObs(self):
+        if(len(self.obstacles) == 0):
+            return {
+                "ship": self.ship.position,
+                "top": 0,
+                "bottom": 0
+            }
+
         o = self.obstacles[0]
         return {
             "ship": self.ship.position, 
@@ -120,13 +130,13 @@ def getWidth(percent):
     return width * percent
 
 def obstacleDist():
-    return getWidth(obstacle.hgap)
+    return getWidth(hgap)
 
 def canAddObstacle(list):
     for e in list:
-        if isinstance(e, obstacle.Obstacle):
+        if isinstance(e, Obstacle):
             if e.xpos > obstacleDist():
                 return False
     return True
 
-spawndist = getWidth(1+(obstacle.hgap*2))
+spawndist = getWidth(1+(hgap*2))
