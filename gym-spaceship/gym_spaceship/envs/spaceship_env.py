@@ -3,8 +3,8 @@ from gym import error, spaces, utils
 from gym.utils import seeding
 import numpy as np
 
-from .ship import Ship
-from .obstacle import *
+from ship import Ship
+import obstacle
 import pygame
 
 # https://www.gymlibrary.ml/
@@ -18,9 +18,9 @@ class SpaceshipEnv(gym.Env):
 
         self.observation_space = spaces.Dict(
             {
-                "ship": spaces.Discrete(2),
-                "top": spaces.Discrete(1),
-                "bottom": spaces.Discrete(1)
+                "ship": spaces.Discrete(height),
+                "top": spaces.Discrete(height),
+                "bottom": spaces.Discrete(height)
             }
         )
 
@@ -28,8 +28,10 @@ class SpaceshipEnv(gym.Env):
         self.window = None
         self.clock = None
 
+        # init gameplay
         self.obstacles = []
-        self.ship = Ship()
+        self.ship = ship.Ship()
+        self.score = 0
 
     def step(self, action):
         done = False
@@ -42,10 +44,10 @@ class SpaceshipEnv(gym.Env):
 
         if len(self.obstacles) < 4 and canAddObstacle(self.obstacles):
             if self.seed != None and isinstance(self.seed):
-                self.obstacles.append(Obstacle(spawndist, self.seed))
+                self.obstacles.append(obstacle.Obstacle(spawndist, self.seed))
                 
             else:
-                self.obstacles.append(Obstacle(spawndist))
+                self.obstacles.append(obstacle.Obstacle(spawndist))
         
         for o in self.obstacles:
             if o.isTouching(self.ship.position):
@@ -53,19 +55,26 @@ class SpaceshipEnv(gym.Env):
             if o.xpos < minpos:
                 self.obstacles.remove(o)
                 reward += 1
-            o.draw()
+                self.score += 1
             o.move(20)
 
         obs = self.getObs()
+        info = self.getInfo()
 
-        return obs, reward, done
+        return obs, reward, done, info 
         
-    def reset(self, seed=None):
+    def reset(self, seed=None, return_info=False):
         super().reset(seed = seed)
         self.seed = seed;
 
+        self.obstacles.clear()
+        self.ship = Ship()
+        self.score = 0
+
         obs = self.getObs()
-        return obs
+        info = self.getInfo()
+        # print(f"{obs=} {type(obs)=}")
+        return (obs, info) if return_info else obs
         
     def render(self, mode='human'):
         if self.window is None and mode == "human":
@@ -104,16 +113,21 @@ class SpaceshipEnv(gym.Env):
     def getObs(self):
         if(len(self.obstacles) == 0):
             return {
-                "ship": self.ship.position,
+                "ship": self.ship.ypos,
                 "top": 0,
                 "bottom": 0
             }
 
         o = self.obstacles[0]
         return {
-            "ship": self.ship.position, 
-            "top": o.top.bottomleft, 
-            "bottom": o.bottom.bottomleft
+            "ship": self.ship.ypos, 
+            "top": o.top.rect.left,
+            "bottom": o.bottom.rect.left
+        }
+    
+    def getInfo(self):
+        return {
+            "score": self.score
         }
 
 # utils
@@ -130,13 +144,13 @@ def getWidth(percent):
     return width * percent
 
 def obstacleDist():
-    return getWidth(hgap)
+    return getWidth(obstacle.hgap)
 
 def canAddObstacle(list):
     for e in list:
-        if isinstance(e, Obstacle):
+        if isinstance(e, obstacle.Obstacle):
             if e.xpos > obstacleDist():
                 return False
     return True
 
-spawndist = getWidth(1+(hgap*2))
+spawndist = getWidth(1+(obstacle.hgap*2))

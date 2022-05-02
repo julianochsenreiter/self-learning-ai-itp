@@ -23,9 +23,9 @@ class Obstacle:
     def xpos(self):
         return self.top.rect.left
 
-    def __init__(self, x: int, seed : int):
-        from spaceship_env import (getWidth, getHeight)
-        #generate distance
+    def __init__(self, x: int, seed : int = None):
+        from .spaceship_env import (getWidth, getHeight)
+        # generate distance
         if seed != None:
             random.seed(seed)
         topdist = random.random()
@@ -50,6 +50,7 @@ class Obstacle:
         self.bottom.rect = self.bottom.surf.get_rect()
         self.bottom.rect.topleft = (x, getHeight(1-bottomdist))
 
+
         # print(f"Created obstacle at {x} ({self.xpos})")
 
     def draw(self, surf):
@@ -72,7 +73,7 @@ class Obstacle:
             # check bottom
             if self.bottom.rect.colliderect(r):
                 return True
-        elif isinstance(r, Tuple[float, float]):
+        elif isinstance(r, tuple):
             if self.top.rect.collidepoint(r):
                 return True
             
