@@ -3,17 +3,23 @@ import gym
 
 def main():
     env = gym.make("gym_spaceship/Spaceship-v0")
-    env.action_space.seed(1337)
+    seed = 42042
+    env.action_space.seed(seed)
+    highscore = 0
 
     observation, info = env.reset(return_info=True)
-
+    gen = 1
     while True:
         observation, reward, done, info = env.step(env.action_space.sample())
-        env.render()
-        # print(f"{reward>0=}")
+        # env.render()
 
         if done:
-            observation, info = env.reset(return_info=True)
+            observation, info = env.reset(seed=seed,return_info=True)
+            score = info["score"]
+            if score > highscore:
+                highscore = score
+                print(f"gen {gen} new highscore ({highscore})")
+            gen += 1
 
     env.close()
 

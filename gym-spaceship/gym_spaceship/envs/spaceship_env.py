@@ -48,7 +48,7 @@ class SpaceshipEnv(gym.Env):
         elif(action == 2): # DOWN
             self.ship.down(10)
 
-        if len(self.obstacles) < 4 and canAddObstacle(self.obstacles):
+        if canAddObstacle(self.obstacles):
             self.obstacles.append(Obstacle(spawndist, self.np_random))
         
         for o in self.obstacles:
@@ -60,8 +60,9 @@ class SpaceshipEnv(gym.Env):
                 self.score += 1
             o.move(20)
         
+        
         nextobstacle = nextObstacle(self.obstacles)
-        if nextobstacle is not None:
+        if nextobstacle != None:
             # the middle of the gap
             gap = nextobstacle.toppos + (nextobstacle.bottompos - nextobstacle.toppos)
             dir = gap - self.ship.ypos
@@ -81,14 +82,15 @@ class SpaceshipEnv(gym.Env):
         return obs, reward, done, info 
         
     def reset(self, seed=None, return_info=False, options=None):
-        super().reset(seed = seed)
+        # super().reset(seed = seed)
+        random.seed(seed)
+        info = self.getInfo()
 
         self.obstacles.clear()
         self.ship = Ship(height/2)
         self.score = 0
 
         obs = self.getObs()
-        info = self.getInfo()
         # print(f"{obs=} {type(obs)=}")
         return (obs, info) if return_info else obs
         
@@ -131,7 +133,7 @@ class SpaceshipEnv(gym.Env):
 
     def getObs(self):
         o = nextObstacle(self.obstacles)
-        if 0 is None:
+        if o == None:
             return {
                 "ship": self.ship.ypos,
                 "obstacle": spawndist,
@@ -139,7 +141,7 @@ class SpaceshipEnv(gym.Env):
                 "bottomheight": 0
             }
 
-        # print(f"{o.top.rect.left=} {o.bottom.rect.left}")
+        # print(f"{o=}")
         return {
             "ship": self.ship.ypos, 
             "obstacle": o.xpos,
@@ -198,15 +200,13 @@ class Obstacle:
 
     def __init__(self, x: int, seed : int = None):
         # generate distance
-        if seed != None:
-            random.seed(seed)
         topdist = random.random()
 
-        buffer = minheight + hgap
+        buffer = minheight + vgap
         max = 1 - buffer
         if topdist > max:
             topdist = max
-        bottomdist = 1 - topdist - hgap
+        bottomdist = 1 - topdist - vgap
 
         #top
         self.top = Sprite()
@@ -265,10 +265,10 @@ shipxpos = 100
 
 # All values are % of the screen
 # the gap between the top and the bottom pipe
-vgap = 0.15
+vgap = 0.25
 
 # the gap between the sets of pipes
-hgap = 0.25
+hgap = 0.75
 
 # the width of the pipes
 pwidth = 0.1
@@ -285,7 +285,7 @@ def getWidth(percent):
     return width * percent
 
 def obstacleDist():
-    return getWidth(hgap)
+    return spawndist-getWidth(hgap)
 
 def canAddObstacle(list):
     for e in list:
@@ -301,5 +301,5 @@ def nextObstacle(obstacles: List[Obstacle]):
     
     return None
 
-spawndist = getWidth(1+(hgap*2))
+spawndist = getWidth(1+hgap)
 # print(f"{spawndist=} {getWidth(1)=} {hgap*2=} {1+hgap*2=} {width=}")
