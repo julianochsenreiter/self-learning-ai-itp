@@ -9,19 +9,21 @@ def main():
 
     observation, info = env.reset(return_info=True)
     gen = 1
-    while True:
-        observation, reward, done, info = env.step(env.action_space.sample())
-        # env.render()
+    try:
+        while True:
+            observation, reward, done, info = env.step(env.action_space.sample())
+            # env.render()
 
-        if done:
-            observation, info = env.reset(seed=seed,return_info=True)
-            score = info["score"]
-            if score > highscore:
-                highscore = score
-                print(f"gen {gen} new highscore ({highscore})")
-            gen += 1
-
-    env.close()
+            if done:
+                observation, info = env.reset(seed=seed,return_info=True)
+                score = info["score"]
+                if score > highscore:
+                    highscore = score
+                    print(f"gen {gen} new highscore ({highscore})")
+                print(f"gen {gen} {score=}/{highscore}")
+                gen += 1
+    finally:
+        env.close()
 
 if __name__ == "__main__":
     main()
