@@ -13,7 +13,7 @@ from pygame.surface import Surface
 # https://www.gymlibrary.ml/
 
 class SpaceshipEnv(gym.Env):
-    metadata = {'render.modes': ['human']}
+    metadata = {'render.modes': ['human', 'rgb_array'], 'render_fps': 60}
 
     def __init__(self):
         # init env
@@ -22,8 +22,7 @@ class SpaceshipEnv(gym.Env):
         self.observation_space = spaces.Dict(
             {
                 "ship": spaces.Discrete(height),
-                "top": spaces.Discrete(spawndist+abs(minpos)+2, start=minpos),
-                "bottom": spaces.Discrete(spawndist+abs(minpos)+2, start=minpos),
+                "obstacle": spaces.Discrete(spawndist+abs(minpos)+2, start=minpos),
                 "topheight": spaces.Discrete(height),
                 "bottomheight": spaces.Discrete(height)
             }
@@ -87,7 +86,10 @@ class SpaceshipEnv(gym.Env):
             self.clock = pygame.time.Clock()
 
         canvas = pygame.Surface((width, height))
-        canvas.fill(pygame.Color)
+        canvas.fill(BACKGROUND)
+        
+        self.ship.draw(canvas)
+
         for o in self.obstacles:
             o.draw(canvas)
         
@@ -114,8 +116,7 @@ class SpaceshipEnv(gym.Env):
         if(len(self.obstacles) == 0):
             return {
                 "ship": self.ship.ypos,
-                "top": 0,
-                "bottom": 0,
+                "obstacle": spawndist,
                 "topheight": 0,
                 "bottomheight": 0
             }
@@ -124,8 +125,7 @@ class SpaceshipEnv(gym.Env):
         # print(f"{o.top.rect.left=} {o.bottom.rect.left}")
         return {
             "ship": self.ship.ypos, 
-            "top": o.top.rect.left,
-            "bottom": o.bottom.rect.left,
+            "obstacle": o.xpos,
             "topheight": o.top.rect.bottom,
             "bottomheight": o.bottom.rect.top
         }
@@ -150,7 +150,6 @@ class Ship:
         self.vertspeed = 200
         self.xpos = 100
         self.ypos = 50
-        self.display = pygame.display.set_mode((800,600))
         # inpos = Sprite()
     
     def up(self, speed: int):
@@ -165,8 +164,8 @@ class Ship:
             self.ypos = 590
         # print(self.ypos)
 
-    def draw(self) -> pygame.Rect:
-        return pygame.draw.polygon(self.display, color=(255,80,80), points=[(self.xpos, self.ypos+10), (self.xpos+30,self.ypos), (self.xpos,self.ypos-10)])
+    def draw(self, surf: Surface) -> pygame.Rect:
+        return pygame.draw.polygon(surf, color=(255,80,80), points=[(self.xpos, self.ypos+10), (self.xpos+30,self.ypos), (self.xpos,self.ypos-10)])
 class Obstacle:
     @property
     def xpos(self):
@@ -187,14 +186,14 @@ class Obstacle:
 
         #top
         self.top = Sprite()
-        self.top.surf = Surface((getWidth(width), getHeight(topdist)))
+        self.top.surf = Surface((getWidth(pwidth), getHeight(topdist)))
         self.top.surf.fill(OBSTC)
         self.top.rect = self.top.surf.get_rect()
         self.top.rect.topleft = (x, 0)
 
         #bottom
         self.bottom = Sprite()
-        self.bottom.surf = Surface((getWidth(width), getHeight(bottomdist)))
+        self.bottom.surf = Surface((getWidth(pwidth), getHeight(bottomdist)))
         self.bottom.surf.fill(OBSTC)
         self.bottom.rect = self.bottom.surf.get_rect()
         self.bottom.rect.topleft = (x, getHeight(1-bottomdist))
@@ -204,8 +203,9 @@ class Obstacle:
 
     def draw(self, surf):
         """draw on surface"""
-        surf.blit(self.top.surf,self.top.rect)
-        surf.blit(self.bottom.surf, self.bottom.rect)
+        # print(f"drawing obst {self.xpos=} {spawndist=} {hgap*2=}")
+        pygame.draw.rect(surf,OBSTC, self.top.rect)
+        pygame.draw.rect(surf,OBSTC, self.bottom.rect)
     
     def move(self, dist: float):
         """Move left a certain distance"""
@@ -247,7 +247,7 @@ vgap = 0.15
 hgap = 0.25
 
 # the width of the pipes
-width = 0.1
+pwidth = 0.1
 
 # minimum height of the pipes
 minheight = 0.1
@@ -271,3 +271,4 @@ def canAddObstacle(list):
     return True
 
 spawndist = getWidth(1+(hgap*2))
+print(f"{spawndist=} {getWidth(1)=} {hgap*2=} {1+hgap*2=} {width=}")
