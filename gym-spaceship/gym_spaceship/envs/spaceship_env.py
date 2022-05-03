@@ -22,8 +22,10 @@ class SpaceshipEnv(gym.Env):
         self.observation_space = spaces.Dict(
             {
                 "ship": spaces.Discrete(height),
-                "top": spaces.Discrete(spawndist+abs(minpos)+2),
-                "bottom": spaces.Discrete(spawndist+abs(minpos)+2, start=minpos)
+                "top": spaces.Discrete(spawndist+abs(minpos)+2, start=minpos),
+                "bottom": spaces.Discrete(spawndist+abs(minpos)+2, start=minpos),
+                "topheight": spaces.Discrete(height),
+                "bottomheight": spaces.Discrete(height)
             }
         )
 
@@ -46,11 +48,7 @@ class SpaceshipEnv(gym.Env):
             self.ship.down(10)
 
         if len(self.obstacles) < 4 and canAddObstacle(self.obstacles):
-            if self.seed != None and isinstance(self.seed):
-                self.obstacles.append(Obstacle(spawndist, self.seed))
-                
-            else:
-                self.obstacles.append(Obstacle(spawndist))
+            self.obstacles.append(Obstacle(spawndist, self.np_random))
         
         for o in self.obstacles:
             if o.isTouching(self.ship.position):
@@ -66,9 +64,8 @@ class SpaceshipEnv(gym.Env):
 
         return obs, reward, done, info 
         
-    def reset(self, seed=None, return_info=False):
+    def reset(self, seed=None, return_info=False, options=None):
         super().reset(seed = seed)
-        self.seed = seed;
 
         self.obstacles.clear()
         self.ship = Ship()
@@ -118,15 +115,19 @@ class SpaceshipEnv(gym.Env):
             return {
                 "ship": self.ship.ypos,
                 "top": 0,
-                "bottom": 0
+                "bottom": 0,
+                "topheight": 0,
+                "bottomheight": 0
             }
 
         o = self.obstacles[0]
-        print(f"{o.top.rect.left=} {o.bottom.rect.left}")
+        # print(f"{o.top.rect.left=} {o.bottom.rect.left}")
         return {
             "ship": self.ship.ypos, 
             "top": o.top.rect.left,
-            "bottom": o.bottom.rect.left
+            "bottom": o.bottom.rect.left,
+            "topheight": o.top.rect.bottom,
+            "bottomheight": o.bottom.rect.top
         }
     
     def getInfo(self):
