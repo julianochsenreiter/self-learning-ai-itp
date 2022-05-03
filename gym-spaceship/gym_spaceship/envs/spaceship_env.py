@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, List
 import random
 
 import gym
@@ -14,10 +14,11 @@ from pygame.surface import Surface
 
 class SpaceshipEnv(gym.Env):
     metadata = {'render.modes': ['human', 'rgb_array'], 'render_fps': 60}
+    reward_range = (-1, 1)
 
     def __init__(self):
         # init env
-        self.action_space = spaces.Discrete(2)
+        self.action_space = spaces.Discrete(3)
 
         self.observation_space = spaces.Dict(
             {
@@ -34,16 +35,17 @@ class SpaceshipEnv(gym.Env):
 
         # init gameplay
         self.obstacles = []
-        self.ship = Ship()
+        self.ship = Ship(height/2)
         self.score = 0
 
     def step(self, action):
         done = False
-        reward = 0
+        reward = -1
+        prevpos = self.ship.ypos
 
-        if(action == 0): # UP
+        if(action == 1): # UP
             self.ship.up(10)
-        elif(action == 1): # DOWN
+        elif(action == 2): # DOWN
             self.ship.down(10)
 
         if len(self.obstacles) < 4 and canAddObstacle(self.obstacles):
@@ -54,9 +56,24 @@ class SpaceshipEnv(gym.Env):
                 done = True
             if o.xpos < minpos:
                 self.obstacles.remove(o)
-                reward += 1
+                # reward += 1
                 self.score += 1
             o.move(20)
+        
+        nextobstacle = nextObstacle(self.obstacles)
+        if nextobstacle is not None:
+            # the middle of the gap
+            gap = nextobstacle.toppos + (nextobstacle.bottompos - nextobstacle.toppos)
+            dir = gap - self.ship.ypos
+            if dir < 0: # we should go up
+                if prevpos > self.ship.ypos: # we are going up
+                    reward = 1
+            elif dir > 0: # we should go down
+                if prevpos < self.ship.ypos: # we are going down
+                    reward = 1
+            else: # we are in a good position
+                reward = 1
+        
 
         obs = self.getObs()
         info = self.getInfo()
@@ -67,7 +84,7 @@ class SpaceshipEnv(gym.Env):
         super().reset(seed = seed)
 
         self.obstacles.clear()
-        self.ship = Ship()
+        self.ship = Ship(height/2)
         self.score = 0
 
         obs = self.getObs()
@@ -113,7 +130,8 @@ class SpaceshipEnv(gym.Env):
             pygame.quit()
 
     def getObs(self):
-        if(len(self.obstacles) == 0):
+        o = nextObstacle(self.obstacles)
+        if 0 is None:
             return {
                 "ship": self.ship.ypos,
                 "obstacle": spawndist,
@@ -121,7 +139,6 @@ class SpaceshipEnv(gym.Env):
                 "bottomheight": 0
             }
 
-        o = self.obstacles[0]
         # print(f"{o.top.rect.left=} {o.bottom.rect.left}")
         return {
             "ship": self.ship.ypos, 
@@ -145,11 +162,11 @@ class Ship:
     def position(self):
         return (self.xpos, self.ypos)
 
-    def __init__(self):
+    def __init__(self, ypos: float):
         self.speed = 20
         self.vertspeed = 200
-        self.xpos = 100
-        self.ypos = 50
+        self.xpos = shipxpos
+        self.ypos = ypos
         # inpos = Sprite()
     
     def up(self, speed: int):
@@ -170,9 +187,16 @@ class Obstacle:
     @property
     def xpos(self):
         return self.top.rect.left
+    
+    @property
+    def toppos(self):
+        return self.top.rect.bottom
+    
+    @property
+    def bottompos(self):
+        return self.bottom.rect.top
 
     def __init__(self, x: int, seed : int = None):
-        from .spaceship_env import (getWidth, getHeight)
         # generate distance
         if seed != None:
             random.seed(seed)
@@ -203,7 +227,6 @@ class Obstacle:
 
     def draw(self, surf):
         """draw on surface"""
-        # print(f"drawing obst {self.xpos=} {spawndist=} {hgap*2=}")
         pygame.draw.rect(surf,OBSTC, self.top.rect)
         pygame.draw.rect(surf,OBSTC, self.bottom.rect)
     
@@ -211,8 +234,7 @@ class Obstacle:
         """Move left a certain distance"""
         self.top.rect.move_ip(-dist, 0)
         self.bottom.rect.move_ip(-dist, 0)
-        # print(f"Moving by {dist} ({self.xpos})")
-    
+
     def isTouching(self, r : Tuple[float, float] | pygame.Rect ):
         if isinstance(r, pygame.Rect):
             # check top
@@ -237,7 +259,9 @@ class Obstacle:
 width = 800
 height = 600
 BACKGROUND = (20, 20, 20)
-minpos = -100
+minpos = -10
+
+shipxpos = 100
 
 # All values are % of the screen
 # the gap between the top and the bottom pipe
@@ -270,5 +294,12 @@ def canAddObstacle(list):
                 return False
     return True
 
+def nextObstacle(obstacles: List[Obstacle]):
+    for o in obstacles:
+        if o.xpos >= shipxpos:
+            return o
+    
+    return None
+
 spawndist = getWidth(1+(hgap*2))
-print(f"{spawndist=} {getWidth(1)=} {hgap*2=} {1+hgap*2=} {width=}")
+# print(f"{spawndist=} {getWidth(1)=} {hgap*2=} {1+hgap*2=} {width=}")
