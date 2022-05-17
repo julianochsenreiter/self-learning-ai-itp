@@ -11,19 +11,20 @@ from pygame.sprite import Sprite
 from pygame.surface import Surface
 
 # https://www.gymlibrary.ml/
-
+spaces.Discrete
 class SpaceshipEnv(gym.Env):
     metadata = {'render.modes': ['human', 'rgb_array'], 'render_fps': 60}
     reward_range = (-1, 1)
 
     def __init__(self):
+        super().__init__()
         # init env
         self.action_space = spaces.Discrete(3)
 
         self.observation_space = spaces.Dict(
             {
                 "ship": spaces.Discrete(height),
-                "obstacle": spaces.Discrete(spawndist+abs(minpos)+2, start=minpos),
+                "obstacle": spaces.Discrete(int(spawndist)+5),
                 "topheight": spaces.Discrete(height),
                 "bottomheight": spaces.Discrete(height)
             }
@@ -49,7 +50,7 @@ class SpaceshipEnv(gym.Env):
             self.ship.down(10)
 
         if canAddObstacle(self.obstacles):
-            self.obstacles.append(Obstacle(spawndist, self.np_random))
+            self.obstacles.append(Obstacle(spawndist))
         
         for o in self.obstacles:
             if o.isTouching(self.ship.position):
@@ -198,7 +199,7 @@ class Obstacle:
     def bottompos(self):
         return self.bottom.rect.top
 
-    def __init__(self, x: int, seed : int = None):
+    def __init__(self, x: int):
         # generate distance
         topdist = random.random()
 
@@ -259,7 +260,7 @@ class Obstacle:
 width = 800
 height = 600
 BACKGROUND = (20, 20, 20)
-minpos = -10
+minpos = 0
 
 shipxpos = 100
 
