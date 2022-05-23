@@ -59,24 +59,39 @@ class SaveOnBestTrainingRewardCallback(BaseCallback):
         return True
 
 def main():
-    # Create log dir
-    log_dir = "tmp/"
-    os.makedirs(log_dir, exist_ok=True)
+  # Create log dir
+  log_dir = "tmp/"
+  os.makedirs(log_dir, exist_ok=True)
 
-    # Create and wrap the environment
-    env = gym.make('gym_spaceship/Spaceship-v0')
-    env = Monitor(env, log_dir)
-    
-    # Because we use parameter noise, we should use a MlpPolicy with layer normalization
-    model = DQN('MultiInputPolicy', env)
-    # Create the callback: check every 1000 steps
-    callback = SaveOnBestTrainingRewardCallback(check_freq=1000, log_dir=log_dir)
-    # Train the agent
-    timesteps = 1e5
-    model.learn(total_timesteps=int(timesteps), callback=callback)
+  # Create and wrap the environment
+  env = gym.make('gym_spaceship/Spaceship-v0')
+  env = Monitor(env, log_dir)
+  
+  # Because we use parameter noise, we should use a MlpPolicy with layer normalization
+  model = DQN('MultiInputPolicy', env)
+  # Create the callback: check every 1000 steps
+  callback = SaveOnBestTrainingRewardCallback(check_freq=1000, log_dir=log_dir)
+  # Train the agent
+  timesteps = 1e6/3
+  model.learn(total_timesteps=int(timesteps), callback=callback)
 
-    plot_results([log_dir], timesteps, results_plotter.X_TIMESTEPS, "Spaceship")
-    plt.show()
+  plot_results([log_dir], timesteps, results_plotter.X_TIMESTEPS, "Spaceship")
+  plt.show()
+
+def load():
+  mdl_dir = "models/"
+  env = gym.make('gym_spaceship/Spaceship-v0')
+
+  model = DQN.load(mdl_dir+"load_model", env)
+
+  # Enjoy trained agent
+  obs = env.reset()
+  for i in range(10000):
+      # print(f"run {i}")
+      action, _states = model.predict(obs, deterministic=True)
+      obs, rewards, dones, info = env.step(action)
+      env.render()
 
 if __name__ == "__main__":
-    main()
+  main()
+  #  load()

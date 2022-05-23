@@ -11,10 +11,9 @@ from pygame.sprite import Sprite
 from pygame.surface import Surface
 
 # https://www.gymlibrary.ml/
-spaces.Discrete
 class SpaceshipEnv(gym.Env):
     metadata = {'render.modes': ['human', 'rgb_array'], 'render_fps': 60}
-    reward_range = (-1, 1)
+    reward_range = (-1, 10)
 
     def __init__(self):
         super().__init__()
@@ -41,6 +40,7 @@ class SpaceshipEnv(gym.Env):
 
     def step(self, action):
         done = False
+        # reward = 0
         reward = -1
         prevpos = self.ship.ypos
 
@@ -57,7 +57,7 @@ class SpaceshipEnv(gym.Env):
                 done = True
             if o.xpos < minpos:
                 self.obstacles.remove(o)
-                # reward += 1
+                reward += 10
                 self.score += 1
             o.move(20)
         
@@ -74,7 +74,7 @@ class SpaceshipEnv(gym.Env):
                 if prevpos < self.ship.ypos: # we are going down
                     reward = 1
             else: # we are in a good position
-                reward = 1
+                reward = 3
         
 
         obs = self.getObs()
@@ -269,7 +269,7 @@ shipxpos = 100
 vgap = 0.25
 
 # the gap between the sets of pipes
-hgap = 0.75
+hgap = 0.90
 
 # the width of the pipes
 pwidth = 0.1
