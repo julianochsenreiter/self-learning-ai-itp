@@ -63,17 +63,17 @@ def main():
   log_dir = "tmp/"
   os.makedirs(log_dir, exist_ok=True)
 
-  # Create and wrap the environment
-  env = gym.make('gym_spaceship/Spaceship-v0')
-  env = Monitor(env, log_dir)
-  
-  # Because we use parameter noise, we should use a MlpPolicy with layer normalization
-  model = DQN('MultiInputPolicy', env)
-  # Create the callback: check every 1000 steps
-  callback = SaveOnBestTrainingRewardCallback(check_freq=1000, log_dir=log_dir)
-  # Train the agent
-  timesteps = 1e6/3
-  model.learn(total_timesteps=int(timesteps), callback=callback)
+    # Create and wrap the environment
+    env = gym.make('gym_spaceship/Spaceship-v0')
+    env = Monitor(env, log_dir)
+    
+    # Because we use parameter noise, we should use a MlpPolicy with layer normalization
+    model = DQN('MultiInputPolicy', env)
+    # Create the callback: check every 1000 steps
+    callback = SaveOnBestTrainingRewardCallback(check_freq=10000, log_dir=log_dir)
+    # Train the agent
+    timesteps = 1e8
+    model.learn(total_timesteps=int(timesteps), callback=callback)
 
   plot_results([log_dir], timesteps, results_plotter.X_TIMESTEPS, "Spaceship")
   plt.show()
