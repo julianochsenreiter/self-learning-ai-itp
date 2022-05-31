@@ -44,6 +44,7 @@ class SpaceshipEnv(gym.Env):
         reward = -1
         prevpos = self.ship.ypos
 
+        # print(action)
         if(action == 1): # UP
             self.ship.up(10)
         elif(action == 2): # DOWN
@@ -53,8 +54,9 @@ class SpaceshipEnv(gym.Env):
             self.obstacles.append(Obstacle(spawndist))
         
         for o in self.obstacles:
-            if o.isTouching(self.ship.position):
-                done = True
+            for p in self.ship.points:
+                if o.isTouching(p):
+                    done = True
             if o.xpos < minpos:
                 self.obstacles.remove(o)
                 reward += 10
@@ -101,6 +103,7 @@ class SpaceshipEnv(gym.Env):
             pygame.display.init()
             pygame.display.set_caption("Spaceship")
             self.window = pygame.display.set_mode((width, height))
+            self.font = pygame.font.SysFont("Segue UI", 50)
 
         if self.clock is None and mode == "human":
             self.clock = pygame.time.Clock()
@@ -109,6 +112,9 @@ class SpaceshipEnv(gym.Env):
         canvas.fill(BACKGROUND)
         
         self.ship.draw(canvas)
+
+        scoresurf = self.font.render(f"Score: {self.score}", False, (200,200,0))
+        canvas.blit(scoresurf, (10,10))
 
         for o in self.obstacles:
             o.draw(canvas)
@@ -165,6 +171,10 @@ class Ship:
     def position(self):
         return (self.xpos, self.ypos)
 
+    @property
+    def points(self):
+        return [(self.xpos, self.ypos+10), (self.xpos+30,self.ypos), (self.xpos,self.ypos-10)]
+
     def __init__(self, ypos: float):
         self.speed = 20
         self.vertspeed = 200
@@ -185,7 +195,7 @@ class Ship:
         # print(self.ypos)
 
     def draw(self, surf: Surface) -> pygame.Rect:
-        return pygame.draw.polygon(surf, color=(255,80,80), points=[(self.xpos, self.ypos+10), (self.xpos+30,self.ypos), (self.xpos,self.ypos-10)])
+        return pygame.draw.polygon(surf, color=(255,80,80), points=self.points)
 class Obstacle:
     @property
     def xpos(self):
