@@ -40,7 +40,7 @@ class SaveOnTimestampRewardCallback(BaseCallback):
         os.makedirs(self.save_path, exist_ok=True)
   
   def createDataFile(self):
-    with open(self.data_path, "w") as f:
+    with open(self.data_path, "a") as f:
       f.write("timestamp;reward")
       print(f"File {self.data_path} Created")
 
