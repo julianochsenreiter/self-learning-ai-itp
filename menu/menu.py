@@ -10,23 +10,20 @@ from turtle import pos, position
 root = tk.Tk()
 
 def StartPlayer():
-    runpy.run_path("C:\\Users\\aim\\Documents\\GitHub\\self-learning-ai-itp\\game\\main.py")
+    print("start player")
 
 def StartAI():
-    runpy.run_path("C:\\Users\\aim\\Documents\\GitHub\\self-learning-ai-itp\\game\\main.py")
+    print("start ai")
 
 def LoadAI():
-    runpy.run_path("C:\\Users\\aim\\Documents\\GitHub\\self-learning-ai-itp\\game\\main.py")
-
+    print("load")
 
 root.resizable(False, False)
-
-
 
 canvas = tk.Canvas(root, height=500, width=600, bg="black")
 canvas.pack()
 
-bg = tk.PhotoImage(file="C:\\Users\\aim\\Documents\\GitHub\\self-learning-ai-itp\\menu\weltall.png")
+bg = tk.PhotoImage(file="menu/weltall.png")
 l = tk.Label(root, image=bg)
 l.place(x=0, y=0, relwidth=1, relheight=1)
 
