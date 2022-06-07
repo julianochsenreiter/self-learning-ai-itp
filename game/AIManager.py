@@ -66,7 +66,7 @@ class SaveOnTimestampRewardCallback(BaseCallback):
               self.best_mean_reward = mean_reward
           
           with open(self.data_path, "a") as file:
-            file.write(f",{self.num_timesteps}; {mean_reward}")
+            file.write(f",{self.num_timesteps};{mean_reward}")
 
     return True
 
