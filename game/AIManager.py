@@ -91,12 +91,10 @@ def GatherData(cls: type[BaseAlgorithm]):
   plot_results([log_dir], timesteps, results_plotter.X_TIMESTEPS, "Spaceship")
   plt.show()
 
-"""
-def Load():
-  mdl_dir = "models/"
+def Load(path: str, alg: type[BaseAlgorithm]):
   env = gym.make('gym_spaceship/Spaceship-v0')
 
-  model = DQN.load(mdl_dir+"load_model", env)
+  model = alg.load(path, env)
   # print(model)
 
   # Enjoy trained agent
@@ -108,4 +106,3 @@ def Load():
       if done:
         env.reset()
       env.render()
-"""
