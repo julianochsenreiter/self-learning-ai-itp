@@ -33,6 +33,8 @@ class SaveOnTimestampRewardCallback(BaseCallback):
     self.save_path = log_dir
     self.data_path = os.path.join(log_dir, "data.csv")
     self.best_mean_reward = -np.inf
+    
+    self.createDataFile()
 
   def _init_callback(self) -> None:
     # Create folder if needed
@@ -40,8 +42,8 @@ class SaveOnTimestampRewardCallback(BaseCallback):
         os.makedirs(self.save_path, exist_ok=True)
   
   def createDataFile(self):
-    with open(self.data_path, "a") as f:
-      f.write("timestamp;reward")
+    with open(self.data_path, "w+") as f:
+      f.write("timestamp,reward\n")
       print(f"File {self.data_path} Created")
 
   def _on_step(self) -> bool:
@@ -66,7 +68,7 @@ class SaveOnTimestampRewardCallback(BaseCallback):
               self.best_mean_reward = mean_reward
           
           with open(self.data_path, "a") as file:
-            file.write(f",{self.num_timesteps};{mean_reward}")
+            file.write(f"{self.num_timesteps},{mean_reward}\n")
 
     return True
 
