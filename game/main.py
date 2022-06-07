@@ -9,6 +9,7 @@ from pygame.locals import (
 )
 from pygame.font import Font
 from random import randint
+from os.path import exists
 import os
 
 width = 800
@@ -39,7 +40,8 @@ def canAddObstacle(list):
     return True
 
 def readScore() -> int:
-    print(os.getcwd())
+    if not exists("highscore.csv"):
+      return 0
     with open("highscore.csv") as file:
         content = file.read()
         if content == "":
@@ -48,7 +50,7 @@ def readScore() -> int:
             return int(content)
 
 def writeScore(score: int):
-    with open("highscore.csv","w") as file:
+    with open("highscore.csv","w+") as file:
         file.write(str(score))
 
 ship = Ship()
