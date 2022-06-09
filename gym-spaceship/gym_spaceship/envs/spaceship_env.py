@@ -2,7 +2,7 @@ from typing import Tuple, List
 import random
 
 import gym
-from gym import error, spaces, utils
+from gym import spaces
 from gym.utils import seeding
 import numpy as np
 
@@ -14,6 +14,9 @@ from pygame.surface import Surface
 class SpaceshipEnv(gym.Env):
     metadata = {'render.modes': ['human', 'rgb_array'], 'render_fps': 60}
     reward_range = (-1, 10)
+
+    def get_keys_to_action(self):
+        return {(ord("w"),): 1, (ord("s"),): 2}
 
     def __init__(self):
         super().__init__()
@@ -98,12 +101,14 @@ class SpaceshipEnv(gym.Env):
         return (obs, info) if return_info else obs
         
     def render(self, mode='human'):
-        if self.window is None and mode == "human":
+        if self.window is None:
             pygame.init()
-            pygame.display.init()
-            pygame.display.set_caption("Spaceship")
-            self.window = pygame.display.set_mode((width, height))
-            self.font = pygame.font.SysFont("Segue UI", 50)
+            self.font = pygame.font.SysFont("Raleway", 50)
+
+            if mode == "human":
+                pygame.display.init()
+                pygame.display.set_caption("Spaceship")
+                self.window = pygame.display.set_mode((width, height))
 
         if self.clock is None and mode == "human":
             self.clock = pygame.time.Clock()
