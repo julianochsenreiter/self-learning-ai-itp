@@ -67,10 +67,9 @@ class SpaceshipEnv(gym.Env):
             o.move(20)
         
         
-        nextobstacle = nextObstacle(self.obstacles)
-        if nextobstacle != None:
-            # the middle of the gap
-            gap = nextobstacle.toppos + (nextobstacle.bottompos - nextobstacle.toppos)
+        # the middle of the gap
+        gap = self.getGap()
+        if gap != 0:
             dir = gap - self.ship.ypos
             if dir < 0: # we should go up
                 if prevpos > self.ship.ypos: # we are going up
@@ -121,6 +120,11 @@ class SpaceshipEnv(gym.Env):
         scoresurf = self.font.render(f"Score: {self.score}", False, (200,200,0))
         canvas.blit(scoresurf, (10,10))
 
+        """
+        gapy = self.getGap()
+        pygame.draw.line(canvas, OBSTC, (0, gapy), (1000, gapy), 5)
+        """
+
         for o in self.obstacles:
             o.draw(canvas)
         
@@ -165,6 +169,14 @@ class SpaceshipEnv(gym.Env):
         return {
             "score": self.score
         }
+    
+    def getGap(self) -> float:
+        nextobstacle = nextObstacle(self.obstacles)
+        if nextobstacle is None:
+            return 0
+        
+        gapsize = nextobstacle.bottompos - nextobstacle.toppos
+        return nextobstacle.toppos + gapsize - gapsize/2
 class Ship:
     # speed = 20
     # vertspeed = 200
