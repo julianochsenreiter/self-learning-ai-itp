@@ -83,7 +83,7 @@ def GatherData(cls: type[BaseAlgorithm]):
   # MultiInputPolicy weil Dictionary
   model = cls('MultiInputPolicy', env)
   
-  timestamps = [100000, 330000, 660000, 1000000, 2000000, 3000000]
+  timestamps = [100000, 330000, 660000, 1000000, 2000000, 3000000, 5000000]
 
   callback = SaveOnTimestampRewardCallback(check_timestamps=timestamps,update_best_frequency=10000, log_dir=log_dir)
   
