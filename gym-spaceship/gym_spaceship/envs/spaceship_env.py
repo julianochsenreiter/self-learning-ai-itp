@@ -1,3 +1,4 @@
+from msilib.schema import File
 from typing import Tuple, List
 import random
 
@@ -6,6 +7,8 @@ from gym import spaces
 from gym.utils import seeding
 import numpy as np
 
+import tkinter
+from tkinter import *
 import pygame
 from pygame.sprite import Sprite
 from pygame.surface import Surface
@@ -100,6 +103,7 @@ class SpaceshipEnv(gym.Env):
         return (obs, info) if return_info else obs
         
     def render(self, mode='human'):
+
         if self.window is None:
             pygame.init()
             self.font = pygame.font.SysFont("Raleway", 50)
@@ -113,7 +117,11 @@ class SpaceshipEnv(gym.Env):
             self.clock = pygame.time.Clock()
 
         canvas = pygame.Surface((width, height))
-        canvas.fill(BACKGROUND)
+        
+        bg = pygame.image.load("weltall.png")
+
+
+        canvas.blit(bg, (0, 0))
         
         self.ship.draw(canvas)
 

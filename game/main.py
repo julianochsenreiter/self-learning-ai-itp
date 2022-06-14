@@ -12,12 +12,10 @@ import tkinter as tk
 
 root = tk.Tk()
 
-# Add image file
-bg = image.load("image\weltall.png")
 
 def StartPlayer():
     _destroyMenu()
-
+                    
     env = gym.make("gym_spaceship/Spaceship-v0")
 
     play(env, fps=240)
