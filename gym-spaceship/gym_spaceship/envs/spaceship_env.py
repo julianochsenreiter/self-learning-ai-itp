@@ -118,7 +118,7 @@ class SpaceshipEnv(gym.Env):
 
         canvas = pygame.Surface((width, height))
         
-        bg = pygame.image.load("weltall.png")
+        bg = pygame.image.load("image/weltall.png")
 
 
         canvas.blit(bg, (0, 0))
