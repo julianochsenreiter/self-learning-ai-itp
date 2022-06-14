@@ -266,14 +266,14 @@ class Obstacle:
 
     def draw(self, surf):
         """draw on surface"""
-        #pygame.draw.rect(surf,OBSTC, self.top.rect)
-        #pygame.draw.rect(surf,OBSTC, self.bottom.rect)
-        obst = pygame.image.load('image/haus.png')
-        obst_spiegel = pygame.image.load('image/haus_spiegel.png')
-        obstn = pygame.transform.scale(obst, (obst.get_height(), obst.get_width()))
-        obstn_spiegel = pygame.transform.scale(obst_spiegel, (obst_spiegel.get_height(), obst_spiegel.get_width()))
-        surf.blit(obstn_spiegel, self.top.rect)
-        surf.blit(obstn, self.bottom.rect)
+        pygame.draw.rect(surf,OBSTC, self.top.rect)
+        pygame.draw.rect(surf,OBSTC, self.bottom.rect)
+        #obst = pygame.image.load('image/haus.png')
+        #obst_spiegel = pygame.image.load('image/haus_spiegel.png')
+        #obstn = pygame.transform.scale(obst, (obst.get_height(), obst.get_width()))
+        #obstn_spiegel = pygame.transform.scale(obst_spiegel, (obst_spiegel.get_height(), obst_spiegel.get_width()))
+        #surf.blit(obstn_spiegel, self.top.rect)
+        #surf.blit(obstn, self.bottom.rect)
 
     
     def move(self, dist: float):
