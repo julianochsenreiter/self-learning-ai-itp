@@ -120,7 +120,6 @@ class SpaceshipEnv(gym.Env):
         
         bg = pygame.image.load("image/weltall.png")
 
-
         canvas.blit(bg, (0, 0))
         
         self.ship.draw(canvas)
@@ -220,7 +219,10 @@ class Ship:
         # print(self.ypos)
 
     def draw(self, surf: Surface) -> pygame.Rect:
-        return pygame.draw.polygon(surf, color=(255,80,80), points=self.points)
+        # return pygame.draw.polygon(surf, color=(255,80,80), points=self.points)
+        spaceShip = pygame.image.load('image/ship.png')
+        surf.blit(spaceShip, (self.xpos, self.ypos))
+
 class Obstacle:
     @property
     def xpos(self):
@@ -244,6 +246,8 @@ class Obstacle:
             topdist = max
         bottomdist = 1 - topdist - vgap
 
+                    
+
         #top
         self.top = Sprite()
         self.top.surf = Surface((getWidth(pwidth), getHeight(topdist)))
@@ -259,12 +263,18 @@ class Obstacle:
         self.bottom.rect.topleft = (x, getHeight(1-bottomdist))
 
 
-        # print(f"Created obstacle at {x} ({self.xpos})")
 
     def draw(self, surf):
         """draw on surface"""
-        pygame.draw.rect(surf,OBSTC, self.top.rect)
-        pygame.draw.rect(surf,OBSTC, self.bottom.rect)
+        #pygame.draw.rect(surf,OBSTC, self.top.rect)
+        #pygame.draw.rect(surf,OBSTC, self.bottom.rect)
+        obst = pygame.image.load('image/haus.png')
+        obst_spiegel = pygame.image.load('image/haus_spiegel.png')
+        obstn = pygame.transform.scale(obst, (obst.get_height(), obst.get_width()))
+        obstn_spiegel = pygame.transform.scale(obst_spiegel, (obst_spiegel.get_height(), obst_spiegel.get_width()))
+        surf.blit(obstn_spiegel, self.top.rect)
+        surf.blit(obstn, self.bottom.rect)
+
     
     def move(self, dist: float):
         """Move left a certain distance"""
