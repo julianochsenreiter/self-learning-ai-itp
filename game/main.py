@@ -6,10 +6,15 @@ from gym.utils.play import play, PlayPlot
 from email.mime import image
 from tkinter.messagebox import YES
 from tkinter import filedialog as fd
+from tkinter import *
 import tkinter as tk
 
 
 root = tk.Tk()
+
+# Add image file
+bg = PhotoImage(file = "image/weltall.png")
+
 
 def StartPlayer():
     _destroyMenu()
