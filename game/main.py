@@ -13,8 +13,7 @@ import tkinter as tk
 root = tk.Tk()
 
 # Add image file
-bg = PhotoImage(file = "image/weltall.png")
-
+bg = image.load("image\weltall.png")
 
 def StartPlayer():
     _destroyMenu()
